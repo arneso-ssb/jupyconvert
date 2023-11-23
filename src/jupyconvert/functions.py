@@ -4,6 +4,31 @@ The template and this example uses Google style docstrings as described at:
 https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 
 """
+from pathlib import Path
+
+
+def files_to_convert(suffix: str) -> list[Path]:
+    """Find files to convert, located below the current working directory.
+
+    Find all files with the given suffix and filter out files from excluded directories.
+    Remove files that are not valid for conversion. Valid .py files must contain a
+    jupytext heading.
+
+    Args:
+        suffix: The  suffix to search for, `py` or `ipynb`
+
+    Returns:
+        List of files to be converted.
+    """
+    root_dir = Path.cwd()
+    exclude_dirs = [".nox", ".venv"]
+
+    return [
+        file
+        for file in root_dir.rglob(f"*.{suffix}")
+        if file.is_file()
+        and all(excluded not in file.parts for excluded in exclude_dirs)
+    ]
 
 
 def example_function(number1: int, number2: int) -> str:
